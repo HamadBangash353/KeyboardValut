@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">KeyboardValut</string>
+    <string name="passwod_hint_label">Password</string>
+    <string name="set_security_question_label">Set Security Question</string>
+    <string name="enable_keyboard_label">Enable Keyboard</string>
+    <string name="set_your_vault_label">Set your vault</string>
+    <string name="hide_vault_icon_label">Hide vault icon</string>
+    <string name="replace_icon_label">Replace Icon</string>
+    <string name="break_in_alert_label">Break In Alert</string>
+    <string name="reset_password_label">Reset Password</string>
+    <string name="add_email_label">Add Email</string>
+    <string name="enter_password_hint_label">Enter password</string>
+    <string name="add_photo_in_vault_label">Add photo in vault</string>
+    <string name="vault_videos_label">Vault Videos</string>
+    <string name="video_label">Video</string>
+    <string name="add_videos_in_vault_label">Add videos in vault</string>
+    <string name="add_document_in_vault_label">Add Document in Vault</string>
+    <string name="title_activity_vault_password">VaultPasswordActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+</resources>

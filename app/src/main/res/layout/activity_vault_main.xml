@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.example.keyboardvalut.interfaces.ClickListener" />
+    </data>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:openDrawer="start">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/vault_main_bg"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/upperNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/btnDrawer"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_centerVertical="true"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_drawer_menu" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_toEndOf="@+id/btnDrawer"
+                    android:fontFamily="@font/nunito_sans_regular"
+                    android:text="My Vault Application"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/btnFirstRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/upperNavigation">
+
+                <ImageView
+                    android:id="@+id/btnMyVault"
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_180sdp"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:src="@drawable/btn_my_vault" />
+
+                <ImageView
+                    android:id="@+id/btnNotesValut"
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_180sdp"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:src="@drawable/btn_vault_notes" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnSecondRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/btnFirstRow">
+
+                <ImageView
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:id="@+id/btnCameraVault"
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_180sdp"
+                    android:src="@drawable/btn_vault_camera" />
+
+                <ImageView
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:id="@+id/btnVaultSettings"
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_180sdp"
+                    android:src="@drawable/btn_vault_settings" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/icEnableKeyboard"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:src="@drawable/ic_enable_keyboard"
+                app:layout_constraintEnd_toEndOf="@+id/upperNavigation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnSecondRow" />
+
+            <TextView
+                android:id="@+id/btnEnableKeyboard"
+                android:layout_width="@dimen/_280sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/btn_enable_keyboard"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:gravity="center"
+                android:onClick="@{(v)->clickHandler.onClick(v)}"
+                android:text="@string/enable_keyboard_label"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_15sdp"
+                app:layout_constraintEnd_toEndOf="@+id/upperNavigation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/icEnableKeyboard" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@android:color/white"
+            android:fitsSystemWindows="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white">
+
+                <ImageView
+                    android:id="@+id/ivHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_200sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/drawer_header" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDrawerMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ivHeader"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_40sdp" />
+            </RelativeLayout>
+        </com.google.android.material.navigation.NavigationView>
+
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+</layout>

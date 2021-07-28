@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.example.keyboardvalut.interfaces.ClickListener" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/upperNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_230sdp"
+            android:background="@drawable/settings_header_bg"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="-2dp">
+
+            <ImageView
+                android:id="@+id/btnDrawer"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginTop="15dp"
+                android:onClick="@{(v)->clickHandler.onClick(v)}"
+                android:padding="10dp"
+                android:src="@drawable/ic_drawer_menu" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_marginTop="15dp"
+                android:layout_toEndOf="@+id/btnDrawer"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="My Vault Application"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_14sdp" />
+
+            <ImageView
+                android:id="@+id/settingHeaderImage"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/settings_header_img" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/settingHeaderImage"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/nunito_regular"
+                android:text="@string/set_your_vault_label"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_14sdp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:onClick="@{(v)->clickHandler.onClick(v)}"
+            android:id="@+id/firstRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/setting_row_bg"
+            app:layout_constraintTop_toBottomOf="@+id/upperNavigation">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="@string/replace_icon_label"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp" />
+
+            <ImageView
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:src="@drawable/ic_replace" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/secondRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/setting_row_bg"
+            app:layout_constraintTop_toBottomOf="@+id/firstRow">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="@string/hide_vault_icon_label"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp" />
+
+            <ImageView
+
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:src="@drawable/ic_toggle_on" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/thirdRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/setting_row_bg"
+            app:layout_constraintTop_toBottomOf="@+id/secondRow">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="@string/break_in_alert_label"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp" />
+
+            <ImageView
+                android:onClick="@{(v)->clickHandler.onClick(v)}"
+                android:id="@+id/ivBreakInAlert"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:src="@drawable/ic_toggle_on" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:onClick="@{(v)->clickHandler.onClick(v)}"
+            android:id="@+id/fourthRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/setting_row_bg"
+            app:layout_constraintTop_toBottomOf="@+id/thirdRow">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="@string/reset_password_label"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp" />
+
+            <ImageView
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:padding="5dp"
+                android:src="@drawable/ic_reset_password" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/fifthRow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/setting_row_bg"
+            app:layout_constraintTop_toBottomOf="@+id/fourthRow">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="@string/add_email_label"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp" />
+
+            <ImageView
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:padding="5dp"
+                android:src="@drawable/ic_add_email" />
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

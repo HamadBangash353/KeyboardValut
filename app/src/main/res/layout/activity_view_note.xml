@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.example.keyboardvalut.interfaces.ClickListener" />
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_color_1"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/upperNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:background="@drawable/toolbar_backgroudn"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/btnDrawer"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:onClick="@{(v)->clickHandler.onClick(v)}"
+                android:padding="10dp"
+                android:src="@drawable/ic_drawer_menu" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_toEndOf="@+id/btnDrawer"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="Vault Notes"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_14sdp" />
+
+        </RelativeLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvNotes"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_430sdp"
+            android:layout_below="@id/upperNavigation"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_10sdp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/etTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:enabled="false"
+                    android:fontFamily="@font/nunito_regular"
+                    android:hint="You can type title"
+                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:textColor="@color/color_blue"
+                    android:textStyle="bold" />
+
+
+                <EditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etTitle"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:background="@null"
+                    android:enabled="false"
+                    android:fontFamily="@font/nunito_regular"
+                    android:hint="Here You can type your note"
+                    android:textColor="@android:color/black" />
+
+                <ImageView
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:id="@+id/ivDelete"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_toStartOf="@+id/ivCopy"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_delete_2" />
+
+                <ImageView
+                    android:id="@+id/ivEdit"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_toStartOf="@id/ivDelete"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_edit_note" />
+
+                <ImageView
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:id="@+id/ivCopy"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_copy" />
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:id="@+id/btnDone"
+            android:layout_width="@dimen/_280sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/btn_enable_keyboard"
+            android:onClick="@{(v)->clickHandler.onClick(v)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/upperNavigation"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <TextView
+                android:id="@+id/tvAddNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:gravity="center"
+                android:text="Done"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_15sdp" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</layout>

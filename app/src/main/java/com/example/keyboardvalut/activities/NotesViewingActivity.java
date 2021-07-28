@@ -1,0 +1,115 @@
+package com.example.keyboardvalut.activities;
+
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
+import com.example.keyboardvalut.R;
+import com.example.keyboardvalut.databinding.ActivityAddNoteBinding;
+import com.example.keyboardvalut.databinding.ActivityViewNoteBinding;
+import com.example.keyboardvalut.helper.DatabaseHelper;
+import com.example.keyboardvalut.interfaces.ClickListener;
+import com.example.keyboardvalut.models.NotesModel;
+import com.example.keyboardvalut.utils.DialogUtils;
+import com.example.keyboardvalut.utils.ScreenUtils;
+
+
+public class NotesViewingActivity extends AppCompatActivity implements ClickListener {
+
+    Context context;
+
+    ActivityViewNoteBinding binding;
+
+    int noteId;
+
+    Dialog deleteNoteDialog;
+
+    Intent intent;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_view_note);
+        ScreenUtils.hidingStatusBar(this);
+
+        context = this;
+
+        noteId = getIntent().getIntExtra("noteId", -2);
+        deleteNoteDialog = new Dialog(context);
+        gettingNotesDataById();
+
+
+        binding.setClickHandler(this);
+
+    }
+
+    private void deletingNote() {
+        DatabaseHelper.getDatabase(context).notesDao().delete(noteId);
+        passingIntentToNotesActivity();
+
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnDone:
+                passingIntentToNotesActivity();
+                break;
+            case R.id.ivEdit:
+                passingIntentToAddNotesActivity(noteId);
+                break;
+            case R.id.ivDelete:
+                DialogUtils.deleteNoteDialog(deleteNoteDialog, this);
+                deleteNoteDialog.show();
+                break;
+            case R.id.ivCopy:
+                copyingText();
+                break;
+            case R.id.btnDelete:
+                deletingNote();
+                deleteNoteDialog.dismiss();
+                break;
+
+        }
+    }
+
+    void passingIntentToAddNotesActivity(int noteId) {
+        intent = new Intent(context, AddNoteActivity.class);
+        intent.putExtra("noteId", noteId);
+        startActivity(intent);
+    }
+
+    private void copyingText() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("NotesData", binding.etTitle.getText() + "\n" + binding.etDescription.getText());
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(context, "Text Copied", Toast.LENGTH_SHORT).show();
+    }
+
+    void gettingNotesDataById() {
+        NotesModel model = DatabaseHelper.getDatabase(context).notesDao().gettingNoteById(noteId);
+        binding.etTitle.setText(model.getTitle());
+        binding.etDescription.setText(model.getDescription());
+    }
+
+
+    void passingIntentToNotesActivity() {
+        Intent i = new Intent(this, VaultNotesActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(i);
+    }
+
+
+}

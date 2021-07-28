@@ -1,0 +1,111 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+
+    </data>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp">
+
+        <RelativeLayout
+            android:layout_width="@dimen/_280sdp"
+            android:layout_height="@dimen/_340sdp"
+            android:layout_gravity="center_horizontal">
+
+            <ImageView
+                android:id="@+id/ivRestore"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_70sdp"
+                android:layout_below="@+id/ivExitEditContactDialog"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_edit_contact_header" />
+
+            <TextView
+                android:id="@+id/addContactLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ivRestore"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:gravity="center"
+                android:text="Edit contact"
+                android:textColor="@color/color_blue"
+                android:textSize="@dimen/_16sdp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/etNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_below="@id/addContactLabel"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:background="@drawable/contact_et_bg">
+
+                <EditText
+                  android:id="@+id/etAddName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="Enter Name"
+                    android:paddingStart="@dimen/_5sdp" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/etNumberLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_below="@id/etNameLayout"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:background="@drawable/contact_et_bg">
+
+                <EditText
+                    android:id="@+id/etAddNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="Enter Number"
+                    android:paddingStart="@dimen/_5sdp" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/ivExitEditContactDialog"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:src="@drawable/ic_cancel" />
+
+
+            <TextView
+                android:id="@+id/btnDone"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_37sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:background="@color/restore_btn_color"
+                android:fontFamily="@font/nunito_regular"
+                android:gravity="center"
+                android:scaleType="fitXY"
+                android:text="Done"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</layout>
