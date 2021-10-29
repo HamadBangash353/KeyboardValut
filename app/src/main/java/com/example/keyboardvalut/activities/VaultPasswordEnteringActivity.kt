@@ -1,15 +1,16 @@
 package com.example.keyboardvalut.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.text.Editable
-import android.text.TextWatcher
+import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -24,7 +25,7 @@ import com.example.keyboardvalut.interfaces.ClickListener
 import com.example.keyboardvalut.utils.ScreenUtils
 import com.example.keyboardvalut.utils.SharedPrefUtil
 import java.io.File
-
+import java.util.*
 
 class VaultPasswordEnteringActivity : AppCompatActivity(), ClickListener {
 
@@ -37,7 +38,6 @@ class VaultPasswordEnteringActivity : AppCompatActivity(), ClickListener {
 
     var isSnapped: Boolean = false
 
-
     var binding: ActivityEnterVaultPasswordBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,45 +48,58 @@ class VaultPasswordEnteringActivity : AppCompatActivity(), ClickListener {
         prefUtil = SharedPrefUtil(context)
 
 
-        Log.d("MyPermissionStatus", checkPermissionStatus().toString());
-
         if (checkPermissionStatus()) {
             startCamera()
         }
-        verifyingPassword()
         binding?.clickHandler = this
-
 
     }
 
+
     private fun verifyingPassword() {
-        binding?.etPassword?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
 
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+        val input: String = binding?.etPassword?.text.toString()
+        val toast: Toast = Toast.makeText(context, "Please enter input", Toast.LENGTH_SHORT)
 
-                if (s.toString().length == prefUtil.password.length) {
-                    if (s.toString() == prefUtil.password) {
-                        passingIntentToVaultMainActivity()
-                    } else {
-                        if (prefUtil.breakInAlert) {
-                            if (checkPermissionStatus()) {
-                                if (!isSnapped) {
-                                    savingImage()
-                                    isSnapped = true
-                                }
-                            }
+        if (input == "") {
+            toast.show()
+        } else {
+            if (input == prefUtil.password) {
+                toast.cancel()
+                passingIntentToVaultMainActivity()
+            } else {
+                if (prefUtil.breakInAlert) {
+                    if (checkPermissionStatus()) {
+                        if (!isSnapped) {
+                            savingImage()
+                            isSnapped = true
                         }
                     }
                 }
+                if (input != prefUtil.password) {
+                    Toast.makeText(context, "Invalid Password", Toast.LENGTH_SHORT).show()
+                    binding?.etPassword?.setText("")
+                }
             }
 
-        })
+
+        }
+
+        if (input.lowercase(Locale.US) == "forgot password" || input.lowercase(Locale.US) == "forget password" ||
+            input.lowercase(Locale.US) == "forgetpassword" ||
+            input.lowercase(Locale.US) == "forgotpassword"
+        ) {
+
+            startActivity(Intent(context, ForgotPasswordActivity::class.java))
+            binding!!.etPassword.setText("")
+        } else {
+            if (input.length > prefUtil.password.length) {
+                Toast.makeText(context, "Invalid Password", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
-    fun checkPermissionStatus(): Boolean {
+    private fun checkPermissionStatus(): Boolean {
         return (ContextCompat.checkSelfPermission(
             context,
             android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -101,7 +114,6 @@ class VaultPasswordEnteringActivity : AppCompatActivity(), ClickListener {
         ) == PackageManager.PERMISSION_GRANTED)
     }
 
-
     private fun passingIntentToVaultMainActivity() {
         intent = Intent(context, VaultMainActivity::class.java)
         startActivity(intent)
@@ -110,9 +122,20 @@ class VaultPasswordEnteringActivity : AppCompatActivity(), ClickListener {
 
     override fun onClick(view: View?) {
         when (view!!.id) {
-            R.id.btnPhotosVault -> {
-                intent = Intent(context, VaultSettingsActivity::class.java)
-                startActivity(intent)
+            R.id.ivEnter -> {
+                verifyingPassword()
+
+            }
+            R.id.btnEnableKeyboard -> {
+                val enableIntent = Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)
+                enableIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                this.startActivity(enableIntent)
+
+            }
+            R.id.btnSelectKeyboard -> {
+                val imeManager =
+                    applicationContext.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imeManager.showInputMethodPicker()
 
             }
         }
@@ -124,15 +147,14 @@ class VaultPasswordEnteringActivity : AppCompatActivity(), ClickListener {
             val cameraProvider = cameraProviderFuture.get()
             preview = Preview.Builder().build()
             preview!!.setSurfaceProvider(binding?.myCameraVeiw?.createSurfaceProvider(camera?.cameraInfo))
-            imageCapture = ImageCapture.Builder().build();
+            imageCapture = ImageCapture.Builder().build()
             val cameraSelector =
                 CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-                    .build();
-            cameraProvider.unbindAll();
+                    .build()
+            cameraProvider.unbindAll()
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
 
         }, ContextCompat.getMainExecutor(context))
-
     }
 
     fun savingImage() {
@@ -151,8 +173,41 @@ class VaultPasswordEnteringActivity : AppCompatActivity(), ClickListener {
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Log.d("MyImageError", "ERROR");
+                    Log.d("MyImageError", "ERROR")
                 }
-            });
+            })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        binding?.etPassword?.requestFocus()
+        binding?.etPassword?.setText("")
+
+    }
+
+    override fun onBackPressed() {
+        showingExitDialog()
+    }
+
+    private fun showingExitDialog() {
+        AlertDialog.Builder(this)
+            .setMessage("Do you really want to exit?")
+            .setCancelable(false)
+            .setPositiveButton(
+                "Yes"
+            ) { dialog, id ->
+
+//                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+//                        homeIntent.addCategory(Intent.CATEGORY_HOME);
+//                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(homeIntent);
+//                        System.exit(1);
+                val intent = Intent(Intent.ACTION_MAIN)
+                intent.addCategory(Intent.CATEGORY_HOME)
+                startActivity(intent)
+            }
+            .setNegativeButton("No", null)
+            .show()
     }
 }

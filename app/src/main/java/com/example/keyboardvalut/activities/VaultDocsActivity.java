@@ -397,7 +397,7 @@ public class VaultDocsActivity extends AppCompatActivity implements ClickListene
 
 
     List<File> gettingHiddenDocuments() {
-        File fileDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/KeyboardVault/MyVaultDocuments/");
+        File fileDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/.KeyboardVault/MyVaultDocuments/");
         File[] dirFiles = fileDirectory.listFiles();
         return Arrays.asList(dirFiles);
 

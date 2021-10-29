@@ -13,6 +13,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.keyboardvalut.BuildConfig;
@@ -29,7 +33,7 @@ import com.example.keyboardvalut.utils.SharedPrefUtil;
 
 import java.security.Security;
 
-public class VaultSettingsActivity extends AppCompatActivity implements ClickListener {
+public class VaultSettingsActivity extends AppCompatActivity implements ClickListener, LifecycleObserver {
 
     Context context;
 
@@ -41,25 +45,37 @@ public class VaultSettingsActivity extends AppCompatActivity implements ClickLis
 
     Intent intent;
 
+    int lifeCycleChecker = 0;
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (lifeCycleChecker==1)
+        {
+            startActivity(new Intent(this,VaultPasswordEnteringActivity.class));
+            finish();
+
+        }
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    void onMoveToBackground() {
+        lifeCycleChecker = 1;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_vault_settings);
         ScreenUtils.hidingStatusBar(this);
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         context = this;
         prefUtil = new SharedPrefUtil(context);
 
         replaceIconDialog = new Dialog(context);
         breakInAlertDialog = new Dialog(context);
 
-
-        if (prefUtil.getBreakInAlert()) {
-            binding.ivBreakInAlert.setImageResource(R.drawable.ic_toggle_on);
-        } else {
-            binding.ivBreakInAlert.setImageResource(R.drawable.ic_toggle_off);
-        }
 
         binding.setClickHandler(this);
     }
@@ -68,50 +84,32 @@ public class VaultSettingsActivity extends AppCompatActivity implements ClickLis
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.ivBreakInAlert:
-                settingBreakInAlertToggle();
-                break;
 
             case R.id.firstRow:
                 DialogUtils.replaceIconDialog(replaceIconDialog, VaultSettingsActivity.this);
                 replaceIconDialog.show();
                 break;
-
             case R.id.fourthRow:
                 passingIntentToResetPassActivity();
                 break;
             case R.id.fifthRow:
-                passingIntentToResetPassActivity();
+                passingIntentToSecurityQuestionActivity();
                 break;
-
+            case R.id.thirdRow:
+                passingIntentToBreakInAlertActivity();
+                break;
             case R.id.btnReplaceIcon:
                 changeIcon();
                 replaceIconDialog.dismiss();
                 break;
+            case R.id.btnBack:
+                movingToBackActivity();
+                break;
             case R.id.ivExitDialog:
-                breakInAlertDialog.dismiss();
+                replaceIconDialog.dismiss();
                 break;
-
-            case R.id.btnEnableAlert:
-                binding.ivBreakInAlert.setImageResource(R.drawable.ic_toggle_on);
-                prefUtil.isBreakInAlertEnabled(true);
-                breakInAlertDialog.dismiss();
-                break;
-
         }
 
-    }
-
-    private void settingBreakInAlertToggle() {
-        if (!prefUtil.getBreakInAlert()) {
-
-            DialogUtils.breakInAlertDialog(breakInAlertDialog, VaultSettingsActivity.this);
-            breakInAlertDialog.show();
-
-        } else {
-            binding.ivBreakInAlert.setImageResource(R.drawable.ic_toggle_off);
-            prefUtil.isBreakInAlertEnabled(false);
-        }
     }
 
 
@@ -123,6 +121,12 @@ public class VaultSettingsActivity extends AppCompatActivity implements ClickLis
 
     void passingIntentToSecurityQuestionActivity() {
         intent = new Intent(context, SecurityQuestionActivity.class);
+        intent.putExtra("tag", "settingActivity");
+        startActivity(intent);
+    }
+
+    void passingIntentToBreakInAlertActivity() {
+        intent = new Intent(context, BreakInAlertImagesActivity.class);
         startActivity(intent);
     }
 
@@ -130,25 +134,31 @@ public class VaultSettingsActivity extends AppCompatActivity implements ClickLis
 
         if (!prefUtil.getIconChangedStatus()) {
             getPackageManager().setComponentEnabledSetting(
-                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.PasswordSignUpActivity"),
+                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.SplashScreen"),
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
             getPackageManager().setComponentEnabledSetting(
-                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.PasswordActivityAlias2"),
+                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.SplashScreenAlias2"),
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
             prefUtil.setIconChangedStatus(true);
         } else {
 
             getPackageManager().setComponentEnabledSetting(
-                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.PasswordActivityAlias2"),
+                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.SplashScreenAlias2"),
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
             getPackageManager().setComponentEnabledSetting(
-                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.PasswordSignUpActivity"),
+                    new ComponentName(BuildConfig.APPLICATION_ID, "com.example.keyboardvalut.SplashScreen"),
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
             prefUtil.setIconChangedStatus(false);
         }
+    }
+
+    private void movingToBackActivity() {
+        intent = new Intent(this, VaultMainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 }

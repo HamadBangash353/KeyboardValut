@@ -41,8 +41,8 @@ public class HiddenImagesAdapter extends RecyclerView.Adapter<HiddenImagesAdapte
     private int visibilityCounter = 0;
 
 
-    public HiddenImagesAdapter(Context context, List<File> effectsList) {
-        this.hiddenImagesList = effectsList;
+    public HiddenImagesAdapter(Context context, List<File> hiddenImagesList) {
+        this.hiddenImagesList = hiddenImagesList;
         this.context = context;
         prefUtil = new SharedPrefUtil(context);
         onFileRestoreCallback = (OnFileRestoreCallback) context;

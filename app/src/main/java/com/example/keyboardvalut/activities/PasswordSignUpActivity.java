@@ -1,18 +1,15 @@
 package com.example.keyboardvalut.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.keyboardvalut.BuildConfig;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
 import com.example.keyboardvalut.R;
 import com.example.keyboardvalut.databinding.ActivityPasswordSignUpBinding;
 import com.example.keyboardvalut.interfaces.ClickListener;
@@ -41,6 +38,10 @@ public class PasswordSignUpActivity extends AppCompatActivity implements ClickLi
             passingIntent();
         }
 
+        if (prefUtil.getAppOpenFirstTime()) {
+            startActivity(new Intent(context, HowToUseActivity.class));
+            prefUtil.isAppOpenFirstTime(false);
+        }
 
         binding.setClickHandler(this);
     }
@@ -83,7 +84,7 @@ public class PasswordSignUpActivity extends AppCompatActivity implements ClickLi
 
     void passingIntent() {
         intent = new Intent(context, SecurityQuestionActivity.class);
-        intent.putExtra("tag","passwordActivity");
+        intent.putExtra("tag", "passwordActivity");
         startActivity(intent);
         if (true) {
             finish();

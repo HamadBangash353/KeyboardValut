@@ -10,15 +10,9 @@
             type="com.example.keyboardvalut.interfaces.ClickListener" />
     </data>
 
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/bg_color_1"
-        android:fitsSystemWindows="true"
-        tools:openDrawer="start">
 
         <RelativeLayout
+            android:background="@color/bg_color_1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -51,6 +45,7 @@
 
 
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvNoPhotos"
@@ -68,14 +63,13 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/btnDrawer"
+                    android:id="@+id/btnBack"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/_5sdp"
                     android:onClick="@{(v)->clickHandler.onClick(v)}"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_drawer_menu" />
+                    android:src="@drawable/ic_main_back" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -83,9 +77,9 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/_20sdp"
-                    android:layout_toEndOf="@+id/btnDrawer"
+                    android:layout_toEndOf="@+id/btnBack"
                     android:fontFamily="@font/nunito_sans_regular"
-                    android:text="Vault Photos"
+                    android:text="Vault Media"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/_14sdp" />
 
@@ -105,8 +99,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPhotos"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/btnAddPhotos"
+                android:layout_height="match_parent"
                 android:layout_below="@+id/upperNavigation"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_10sdp"
@@ -114,41 +107,7 @@
                 android:layout_marginBottom="@dimen/_10sdp" />
 
 
-            <RelativeLayout
-                android:id="@+id/btnAddPhotos"
-                android:layout_width="@dimen/_280sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@drawable/btn_enable_keyboard"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/upperNavigation"
-                app:layout_constraintStart_toStartOf="parent">
 
-                <ImageView
-                    android:layout_width="@dimen/_25sdp"
-                    android:layout_height="@dimen/_25sdp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/_15sdp"
-                    android:layout_toStartOf="@id/tvAddPhotos"
-                    android:padding="3dp"
-                    android:src="@drawable/ic_add" />
-
-                <TextView
-                    android:id="@+id/tvAddPhotos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:fontFamily="@font/nunito_sans_regular"
-                    android:gravity="center"
-                    android:onClick="@{(v)->clickHandler.onClick(v)}"
-                    android:text="@string/add_photo_in_vault_label"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/_15sdp"
-                    />
-            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/bottonSheetLayout"
@@ -231,5 +190,4 @@
         </RelativeLayout>
 
 
-    </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

@@ -11,6 +11,10 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.keyboardvalut.R;
@@ -28,7 +32,7 @@ import com.example.keyboardvalut.utils.ScreenUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VaultNotesActivity extends AppCompatActivity implements ClickListener, EditNoteCallback, DeleteNoteCallback, OnNoteClick {
+public class VaultNotesActivity extends AppCompatActivity implements ClickListener, EditNoteCallback, DeleteNoteCallback, OnNoteClick, LifecycleObserver {
 
     Context context;
     Intent intent;
@@ -42,6 +46,25 @@ public class VaultNotesActivity extends AppCompatActivity implements ClickListen
     int noteId;
 
 
+    int lifeCycleChecker = 0;
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (lifeCycleChecker==1)
+        {
+            startActivity(new Intent(this,VaultPasswordEnteringActivity.class));
+            finish();
+
+        }
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    void onMoveToBackground() {
+        lifeCycleChecker = 1;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +72,7 @@ public class VaultNotesActivity extends AppCompatActivity implements ClickListen
         ScreenUtils.hidingStatusBar(this);
 
         context = this;
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         deleteNoteDialog = new Dialog(context);
         searchingNotes();
 
@@ -64,13 +87,29 @@ public class VaultNotesActivity extends AppCompatActivity implements ClickListen
             case R.id.btnAddNotes:
                 passingIntentToAddNotesActivity(-1);
                 break;
+
             case R.id.btnDelete:
                 deletingNote();
+                deleteNoteDialog.dismiss();
+                break;
+
+            case R.id.btnBack:
+                movingToBackActivity();
+                break;
+
+            case R.id.ivExit:
+            case R.id.btnCancel:
                 deleteNoteDialog.dismiss();
                 break;
         }
     }
 
+
+    private void movingToBackActivity() {
+        intent = new Intent(this, VaultMainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
 
 
 
@@ -91,6 +130,15 @@ public class VaultNotesActivity extends AppCompatActivity implements ClickListen
             @Override
             public void afterTextChanged(Editable s) {
 
+                if (!s.toString().isEmpty()) {
+                    binding.btnAddNotes.setVisibility(View.INVISIBLE);
+                    binding.emptyLayoutIndicator.setVisibility(View.GONE);
+                } else {
+                    binding.btnAddNotes.setVisibility(View.VISIBLE);
+                    if (notesList.size() == 0) {
+                        binding.emptyLayoutIndicator.setVisibility(View.VISIBLE);
+                    }
+                }
                 // filter your list from your input
                 filter(s.toString());
                 //you can use runnable postDelayed like 500 ms to delay search text
@@ -104,7 +152,7 @@ public class VaultNotesActivity extends AppCompatActivity implements ClickListen
         for (NotesModel d : notesList) {
             //or use .equal(text) with you want equal match
             //use .toLowerCase() for better matches
-            if (d.getTitle().toLowerCase().contains(text)) {
+            if (d.getTitle().toLowerCase().contains(text.toLowerCase())) {
                 searchList.add(d);
             }
         }
@@ -155,17 +203,19 @@ public class VaultNotesActivity extends AppCompatActivity implements ClickListen
     private void deletingNote() {
         DatabaseHelper.getDatabase(context).notesDao().delete(noteId);
         refreshAdapter();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         settingAdapter();
+
+        binding.etSearch.setText("");
     }
 
     @Override
     public void onEditNoteCallback(int noteId) {
+
         passingIntentToAddNotesActivity(noteId);
 
     }

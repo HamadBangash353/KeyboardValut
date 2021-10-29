@@ -6,30 +6,34 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.keyboardvalut.R;
-import com.example.keyboardvalut.adapters.DrawerMenuAdapter;
 import com.example.keyboardvalut.adapters.HiddenVideosAdapter;
-import com.example.keyboardvalut.data.DrawerMenuData;
 import com.example.keyboardvalut.databinding.ActivityVaultVideosBinding;
 import com.example.keyboardvalut.interfaces.ClickListener;
 import com.example.keyboardvalut.interfaces.DeleteFileCallback;
-import com.example.keyboardvalut.interfaces.DrawerMenuClickListener;
 import com.example.keyboardvalut.interfaces.OnVideoClickCallback;
 import com.example.keyboardvalut.interfaces.SelectedPathListCallback;
 import com.example.keyboardvalut.interfaces.OnFileRestoreCallback;
 import com.example.keyboardvalut.utils.DialogUtils;
+import com.example.keyboardvalut.utils.ItemDecorationUtils;
 import com.example.keyboardvalut.utils.MediaScannerUtils;
 import com.example.keyboardvalut.utils.ScreenUtils;
 import com.example.keyboardvalut.utils.SharedPrefUtil;
@@ -48,10 +52,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VaultVideosActivity extends AppCompatActivity implements ClickListener, DrawerMenuClickListener, OnFileRestoreCallback, SelectedPathListCallback, DeleteFileCallback, OnVideoClickCallback {
+import static android.os.Build.VERSION.SDK_INT;
+
+public class VaultVideosActivity extends AppCompatActivity implements ClickListener, OnFileRestoreCallback, SelectedPathListCallback, DeleteFileCallback, OnVideoClickCallback, LifecycleObserver {
 
     Context context;
-    DrawerMenuAdapter adapter;
     Intent intent;
     boolean isViewSelected = false;
     ActivityVaultVideosBinding binding;
@@ -71,7 +76,24 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
 
     boolean isVideosGallerySelected = false;
 
+    boolean isDecorated = false;
+    boolean dataSelected = false;
 
+    int lifeCycleChecker = 0;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (lifeCycleChecker == 1) {
+            startActivity(new Intent(this, VaultPasswordEnteringActivity.class));
+            finish();
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    void onMoveToBackground() {
+        lifeCycleChecker = 1;
+    }
 
 
     @Override
@@ -81,7 +103,7 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
         ScreenUtils.hidingStatusBar(this);
 
         context = this;
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         photoPaths = new ArrayList<>();
         selectedPathsList = new ArrayList<>();
 
@@ -106,39 +128,53 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
             case R.id.btnAddPhotos:
                 openingGallery();
                 break;
+
             case R.id.btnRestoreAllImages:
                 DialogUtils.restoreAllFileDialog(restoreAllImagesDialog, this);
                 restoreAllImagesDialog.show();
                 break;
+
             case R.id.btnDoneAddContacts:
                 restoringFiles(selectedPath);
                 dismissDialog(restoreSingleImageDialog);
                 refreshAdapter();
                 break;
+
             case R.id.btnCancelResotoreDilog:
             case R.id.ivExitContactDialog:
                 DialogUtils.restoreDialog(restoreSingleImageDialog, VaultVideosActivity.this);
                 dismissDialog(restoreSingleImageDialog);
                 break;
+
             case R.id.btnCancelDeleteDialog:
             case R.id.ivExitDeleteDialog:
                 DialogUtils.deleteFileDialog(deleteImageDialog, VaultVideosActivity.this);
                 dismissDialog(deleteImageDialog);
                 break;
+
             case R.id.btnCancelDelteAllImageDialog:
             case R.id.ivExitDeleteAllImagesDialog:
                 DialogUtils.deleteAllFileDialog(deleteAllImagesDialog, VaultVideosActivity.this);
                 dismissDialog(deleteAllImagesDialog);
                 break;
+
+            case R.id.btnCancelRestoreAll:
+            case R.id.ivExitRestoreAllImages:
+                dismissDialog(restoreAllImagesDialog);
+                break;
+
             case R.id.btnDeleteAll:
                 new File(selectedPath).delete();
                 dismissDialog(deleteImageDialog);
                 refreshAdapter();
                 break;
+
             case R.id.btnRestoreAll:
-                restoreAllImages(selectedPathsList);
+               new MyTask().execute(selectedPathsList);
                 dismissDialog(restoreAllImagesDialog);
-                reloadingAdapter();
+                binding.bottonSheetLayout.setVisibility(View.GONE);
+                binding.btnAddPhotos.setVisibility(View.VISIBLE);
+
                 break;
 
             case R.id.btnDeleteAllImage:
@@ -148,8 +184,15 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
 
             case R.id.btnDeleteAllDialog:
                 deletingAllFile(selectedPathsList);
+                binding.bottonSheetLayout.setVisibility(View.GONE);
+                binding.btnAddPhotos.setVisibility(View.VISIBLE);
                 dismissDialog(deleteAllImagesDialog);
                 break;
+
+            case R.id.btnBack:
+                movingToBackActivity();
+                break;
+
 
         }
     }
@@ -162,7 +205,12 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
 
     void refreshAdapter() {
 
-        hiddenVideosAdapter.refreshAdapter(gettingHiddenImages());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hiddenVideosAdapter.refreshAdapter(gettingHiddenImages());
+            }
+        },1000);
     }
 
 
@@ -184,8 +232,7 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
     }
 
 
-    private void loadingHiddenVideos()
-    {
+    private void loadingHiddenVideos() {
         new Handler().postDelayed(() -> {
             if (gettingHiddenImages().size() == 0) {
                 binding.emptyLayoutIndicator.setVisibility(View.VISIBLE);
@@ -198,53 +245,25 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
             binding.bottonSheetLayout.setVisibility(View.GONE);
 
             settingAdapter();
-        },  200);
+        }, 200);
 
     }
 
     void openingGallery() {
         Intent intent = new Lassi(this)
-                .with(LassiOption.GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .with(LassiOption.GALLERY)
                 .setMaxCount(5)
                 .setGridSize(3)
                 .setMediaType(MediaType.VIDEO)
                 .setSupportedFileTypes("mp4", "mkv", "webm", "avi", "flv", "3gp")
                 .setStatusBarColor(R.color.color_blue)
-                .setToolbarResourceColor(R.color.color_blue)
+                .setToolbarResourceColor(R.color.white)
                 .setProgressBarColor(R.color.colorAccent)
+                .setToolbarColor(R.color.color_blue)
                 .build();
         startActivityForResult(intent, 2);
     }
 
-    private void populatingDrawerMenu() {
-        adapter = new DrawerMenuAdapter(context, new DrawerMenuData().getMenuList());
-//        binding.rvDrawerMenu.setLayoutManager(new LinearLayoutManager(context));
-//        binding.rvDrawerMenu.setAdapter(adapter);
-    }
-
-    private void closeDrawer() {
-        binding.drawerLayout.closeDrawer(GravityCompat.START);
-    }
-
-    @Override
-    public void onDrawerMenuClickListener(int position) {
-        switch (position) {
-            case 0:
-                Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show();
-                closeDrawer();
-                break;
-            case 1:
-                closeDrawer();
-                break;
-            case 2:
-                closeDrawer();
-                break;
-            case 3:
-
-                closeDrawer();
-                break;
-        }
-    }
 
     private void deletingAllFile(List<String> selectedPathsList) {
         dialog.show();
@@ -294,7 +313,6 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
                 e.printStackTrace();
             }
             runOnUiThread(() -> {
-
                 dialog.dismiss();
                 loadingHiddenVideos();
             });
@@ -302,18 +320,47 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
     }
 
 
-    void restoreAllImages(List<String> imagesPaths) {
+    class MyTask extends AsyncTask<List<String>,Void,Void>
+    {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
+
+        @SafeVarargs
+        @Override
+        protected final Void doInBackground(List<String>... lists) {
+            int i = 0;
+            while (i < lists[0].size()) {
+                restoringFiles(lists[0].get(i));
+                i++;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            reloadingAdapter();
+            if (dialog.isShowing())
+            {
+                dialog.dismiss();
+            }
+        }
+    }
+
+    void restoreAllVideos(List<String> imagesPaths) {
         dialog.show();
         new Thread(() -> {
-
             try {
                 int i = 0;
                 while (i < imagesPaths.size()) {
                     restoringFiles(imagesPaths.get(i));
-
                     i++;
                 }
-
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -324,6 +371,8 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
             });
         }).start();
     }
+
+
 
 
     @Override
@@ -346,22 +395,24 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
             return;
         }
 
-
         FileChannel source;
         FileChannel destination;
         source = new FileInputStream(sourceFile).getChannel();
         destination = new FileOutputStream(destFile).getChannel();
         if (destination != null && source != null) {
             destination.transferFrom(source, 0, source.size());
-//            sourceFile.delete();
+            sourceFile.delete();
             new MediaScannerUtils(context, destFile);
             new MediaScannerUtils(context, sourceFile);
         }
-        if (source != null) {
-            source.close();
-        }
-        if (destination != null) {
-            destination.close();
+        if (!(SDK_INT >= Build.VERSION_CODES.R)) {
+            if (source != null) {
+                source.close();
+
+            }
+            if (destination != null) {
+                destination.close();
+            }
         }
     }
 
@@ -377,28 +428,37 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
     void settingAdapter() {
         hiddenVideosAdapter = new HiddenVideosAdapter(context, gettingHiddenImages());
         binding.rvPhotos.setLayoutManager(new GridLayoutManager(context, 2));
+        if (!isDecorated) {
+            ItemDecorationUtils itemDecoration = new ItemDecorationUtils(context, R.dimen._5sdp);
+            binding.rvPhotos.addItemDecoration(itemDecoration);
+            isDecorated = true;
+        }
         binding.rvPhotos.setAdapter(hiddenVideosAdapter);
 
     }
 
     @Override
     public void onFileRestoreCallback(String path) {
-        selectedPath = path;
-        DialogUtils.restoreDialog(restoreSingleImageDialog, this);
-        Toast.makeText(context, path, Toast.LENGTH_SHORT).show();
-        restoreSingleImageDialog.show();
+        if (!dataSelected) {
+            selectedPath = path;
+            DialogUtils.restoreDialog(restoreSingleImageDialog, this);
+            restoreSingleImageDialog.show();
+        }
 
     }
 
     void restoringFiles(String path) {
 
+        Log.d("MyPaths",path);
+
         File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File(sdCard.getAbsolutePath() + "/.KeyboardVault/RestoredData");
+        File dir = new File(sdCard.getAbsolutePath() + "/RestoredData");
         File from = new File(path);
         long currentTime = System.currentTimeMillis();
         File to = new File(dir + "/" + currentTime + ".mp4");
         try {
             copyFile(from, to);
+//            FileUtils.copyFile(source, destination);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -411,6 +471,7 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
             binding.bottonSheetLayout.setVisibility(View.GONE);
             binding.btnAddPhotos.setVisibility(View.VISIBLE);
             isViewSelected = false;
+            dataSelected = false;
         } else {
             passingIntentToBackActivity();
         }
@@ -428,11 +489,13 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
 
 
         if (visibilityCounter > 0) {
+            dataSelected = true;
             isViewSelected = true;
             binding.bottonSheetLayout.setVisibility(View.VISIBLE);
             binding.btnAddPhotos.setVisibility(View.GONE);
             this.selectedPathsList = selectedPathsList;
         } else {
+            dataSelected = false;
             isViewSelected = false;
             binding.btnAddPhotos.setVisibility(View.VISIBLE);
             binding.bottonSheetLayout.setVisibility(View.GONE);
@@ -441,15 +504,24 @@ public class VaultVideosActivity extends AppCompatActivity implements ClickListe
 
     @Override
     public void onFileDeleteCallback(String path) {
-        selectedPath = path;
-        DialogUtils.deleteFileDialog(deleteImageDialog, this);
-        deleteImageDialog.show();
+        if (!dataSelected) {
+            selectedPath = path;
+            DialogUtils.deleteFileDialog(deleteImageDialog, this);
+            deleteImageDialog.show();
+        }
     }
 
     @Override
     public void onVideoClickCallback(String path) {
         intent = new Intent(context, VideoPlayerActivity.class);
         intent.putExtra("videoPath", path);
+        startActivity(intent);
+    }
+
+
+    private void movingToBackActivity() {
+        intent = new Intent(this, VaultSubActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 }

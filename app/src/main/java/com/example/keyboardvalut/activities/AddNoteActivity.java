@@ -1,11 +1,8 @@
 package com.example.keyboardvalut.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.icu.text.UnicodeSetSpanner;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,29 +10,46 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.example.keyboardvalut.R;
-import com.example.keyboardvalut.adapters.DrawerMenuAdapter;
-import com.example.keyboardvalut.adapters.HiddenDocumentsAdapter;
 import com.example.keyboardvalut.databinding.ActivityAddNoteBinding;
-import com.example.keyboardvalut.databinding.ActivityVaultNotesBinding;
 import com.example.keyboardvalut.helper.DatabaseHelper;
 import com.example.keyboardvalut.interfaces.ClickListener;
 import com.example.keyboardvalut.models.NotesModel;
-import com.example.keyboardvalut.utils.DialogUtils;
 import com.example.keyboardvalut.utils.ScreenUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 
-
-public class AddNoteActivity extends AppCompatActivity implements ClickListener {
+public class AddNoteActivity extends AppCompatActivity implements ClickListener, LifecycleObserver {
 
     Context context;
 
     ActivityAddNoteBinding binding;
 
     int noteId;
+
+    Intent intent;
+
+    int lifeCycleChecker = 0;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (lifeCycleChecker == 1) {
+            startActivity(new Intent(this, VaultPasswordEnteringActivity.class));
+            finish();
+
+        }
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    void onMoveToBackground() {
+        lifeCycleChecker = 1;
+    }
 
 
     @Override
@@ -47,7 +61,7 @@ public class AddNoteActivity extends AppCompatActivity implements ClickListener 
         context = this;
 
         noteId = getIntent().getIntExtra("noteId", -2);
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         if (noteId == -1) {
             binding.tvAddNotes.setText("Done");
         } else {
@@ -71,6 +85,9 @@ public class AddNoteActivity extends AppCompatActivity implements ClickListener 
                 } else {
                     updatingNote();
                 }
+                break;
+            case R.id.btnBack:
+                movingToBackActivity();
                 break;
 
         }
@@ -101,8 +118,8 @@ public class AddNoteActivity extends AppCompatActivity implements ClickListener 
     }
 
     private void updatingNote() {
-      int i=  DatabaseHelper.getDatabase(context).notesDao().updateNote(noteId, binding.etTitle.getText().toString(), binding.etDescription.getText().toString());
-        Log.d("MyData",i+"");
+        int i = DatabaseHelper.getDatabase(context).notesDao().updateNote(noteId, binding.etTitle.getText().toString(), binding.etDescription.getText().toString());
+        Log.d("MyData", i + "");
         passingIntentToNotesActivity();
     }
 
@@ -111,6 +128,12 @@ public class AddNoteActivity extends AppCompatActivity implements ClickListener 
         Intent i = new Intent(this, VaultNotesActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(i);
+    }
+
+    private void movingToBackActivity() {
+        intent = new Intent(this, VaultNotesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
 

@@ -33,7 +33,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/btnDrawer"
+                    android:id="@+id/btnBack"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:layout_centerVertical="true"
@@ -47,9 +47,9 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/_20sdp"
-                    android:layout_toEndOf="@+id/btnDrawer"
+                    android:layout_toEndOf="@+id/btnBack"
                     android:fontFamily="@font/nunito_sans_regular"
-                    android:text="My Vault Application"
+                    android:text="My Vault"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/_14sdp" />
 
@@ -88,17 +88,17 @@
                 app:layout_constraintTop_toBottomOf="@id/btnFirstRow">
 
                 <ImageView
-                    android:onClick="@{(v)->clickHandler.onClick(v)}"
                     android:id="@+id/btnCameraVault"
                     android:layout_width="@dimen/_150sdp"
                     android:layout_height="@dimen/_180sdp"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
                     android:src="@drawable/btn_vault_camera" />
 
                 <ImageView
-                    android:onClick="@{(v)->clickHandler.onClick(v)}"
                     android:id="@+id/btnVaultSettings"
                     android:layout_width="@dimen/_150sdp"
                     android:layout_height="@dimen/_180sdp"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
                     android:src="@drawable/btn_vault_settings" />
             </LinearLayout>
 
@@ -108,6 +108,7 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginTop="@dimen/_25sdp"
                 android:src="@drawable/ic_enable_keyboard"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/upperNavigation"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnSecondRow" />
@@ -124,6 +125,7 @@
                 android:text="@string/enable_keyboard_label"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/_15sdp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/upperNavigation"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/icEnableKeyboard" />

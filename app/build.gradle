@@ -11,10 +11,22 @@ android {
         enabled = true
     }
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
+    }
+
     defaultConfig {
         applicationId "com.example.keyboardvalut"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -28,7 +40,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -48,6 +60,10 @@ dependencies {
 
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+    implementation files('libs/activation.jar')
+    implementation files('libs/additionnal.jar')
+    implementation files('libs/javax.mail.jar')
+    implementation 'androidx.lifecycle:lifecycle-process:2.3.1'
     def room_version = "1.1.1"
 
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -67,14 +83,19 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     implementation 'com.github.Mindinventory:Lassi:0.2.0'
     implementation 'com.droidninja:filepicker:2.2.5'
-    implementation 'com.henryblue.mxvideoplayer:xvideoplayer:1.2.1'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-
+    implementation 'com.github.HamidrezaAmz:MagicalExoPlayer:2.0.6'
+    implementation 'commons-io:commons-io:2.6'
 
     //room
     implementation "android.arch.persistence.room:runtime:$room_version"
     annotationProcessor "android.arch.persistence.room:compiler:$room_version"
     testImplementation "android.arch.persistence.room:testing:$room_version"
+
+    def lifecycle_version = "2.0.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
 
     def camerax_version = "1.0.0-beta03"

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.example.keyboardvalut.interfaces.ClickListener" />
+    </data>
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/ivScreens"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/htu_1" />
+
+        <ImageView
+            android:onClick="@{(v)->clickHandler.onClick(v)}"
+            android:id="@+id/btnNext"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_25sdp"
+            android:src="@drawable/btn_next" />
+
+        <TextView
+            android:onClick="@{(v)->clickHandler.onClick(v)}"
+            android:id="@+id/btnSkip"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_25sdp"
+            android:fontFamily="@font/nunito_sans_regular"
+            android:gravity="center"
+            android:text="Skip"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/_14sdp" />
+
+    </RelativeLayout>
+</layout>

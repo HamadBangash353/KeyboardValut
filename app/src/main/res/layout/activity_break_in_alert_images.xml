@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.example.keyboardvalut.interfaces.ClickListener" />
+    </data>
+
+
+
+        <RelativeLayout
+            android:background="@color/bg_color_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/emptyLayoutIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/ivEmpty"
+                    android:layout_width="@dimen/_200sdp"
+                    android:layout_height="@dimen/_200sdp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_empty" />
+
+                <TextView
+                    android:id="@+id/tvNoPhotos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ivEmpty"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="@font/nunito_regular"
+                    android:text="Ouhh..it's empty in here."
+                    android:textColor="@color/color_blue"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvNoPhotos"
+                    android:layout_centerHorizontal="true"
+                    android:text="Add photos that you want to hide"
+                    android:textSize="@dimen/_15sdp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/upperNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:background="@drawable/toolbar_backgroudn"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    android:src="@drawable/ic_main_back" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_toEndOf="@+id/btnBack"
+                    android:fontFamily="@font/nunito_sans_regular"
+                    android:text="Break in Alert"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="@dimen/_200sdp"
+                android:src="@drawable/ic_empty"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvBreakInAlert"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_below="@+id/upperNavigation"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_5sdp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/nunito_sans_regular"
+                        android:text="Enable / Disable"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_16sdp" />
+
+                    <ImageView
+                        android:id="@+id/ivBreakInAlert"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/_15sdp"
+                        android:onClick="@{(v)->clickHandler.onClick(v)}"
+                        android:src="@drawable/ic_toggle_off" />
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="@dimen/_16sdp"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:text="Break in attempts"
+                android:id="@+id/tvHeader"
+                android:layout_below="@+id/cvBreakInAlert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textSize="@dimen/_13sdp"
+                android:textColor="@android:color/black"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:fontFamily="@font/nunito_sans_regular"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="Captured Pictures While Break in attempts "
+                android:id="@+id/tvSubHeader"
+                android:layout_below="@+id/tvHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPhotos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tvSubHeader"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp" />
+
+
+
+            <RelativeLayout
+                android:id="@+id/bottonSheetLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/bottom_sheet_layout_bg"
+                android:paddingTop="10dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:id="@+id/btnRestoreAllImages"
+                    android:layout_width="@dimen/_200sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/btn_restore_bg"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/nunito_sans_regular"
+                        android:text="Restore"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/_15sdp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_restore" />
+                </RelativeLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btnDeleteAllImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/btnRestoreAllImages"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="15dp"
+                    android:elevation="4dp"
+                    android:onClick="@{(v)->clickHandler.onClick(v)}"
+                    app:cardCornerRadius="7dp">
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="@dimen/_38sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="10dp"
+                            android:fontFamily="@font/nunito_sans_regular"
+                            android:text="Delete"
+                            android:textColor="@color/color_blue"
+                            android:textSize="@dimen/_15sdp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:src="@drawable/ic_delete_media" />
+
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+</layout>

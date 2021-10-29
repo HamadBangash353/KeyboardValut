@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="clickHandler"
             type="com.example.keyboardvalut.interfaces.ClickListener" />

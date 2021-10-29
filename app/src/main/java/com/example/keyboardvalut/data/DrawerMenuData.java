@@ -17,6 +17,7 @@ public class DrawerMenuData {
         list.add(new DrawerMenuModel("Vault notes", R.drawable.ic_vault_notes));
         list.add(new DrawerMenuModel("Vault camera", R.drawable.ic_vault_camera));
         list.add(new DrawerMenuModel("Vault settings", R.drawable.ic_vault_settings));
+        list.add(new DrawerMenuModel("How to use", R.drawable.ic_question_mark));
 
 
         return list;

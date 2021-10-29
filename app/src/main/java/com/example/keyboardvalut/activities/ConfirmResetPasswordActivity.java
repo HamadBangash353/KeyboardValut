@@ -25,6 +25,8 @@ public class ConfirmResetPasswordActivity extends AppCompatActivity implements C
 
     SharedPrefUtil prefUtil;
 
+    String getPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +35,8 @@ public class ConfirmResetPasswordActivity extends AppCompatActivity implements C
 
         context = this;
         prefUtil = new SharedPrefUtil(context);
+
+        getPassword=getIntent().getStringExtra("password");
 
 
         binding.setClickHandler(this);
@@ -53,7 +57,8 @@ public class ConfirmResetPasswordActivity extends AppCompatActivity implements C
         if (password.isEmpty()) {
             Toast.makeText(context, "Fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
-            if (password.equals(prefUtil.getPassword())) {
+            if (password.equals(getPassword)) {
+                prefUtil.setPassword(getPassword);
                 Toast.makeText(context, "Password Reset Successful", Toast.LENGTH_SHORT).show();
                 finish();
             } else {

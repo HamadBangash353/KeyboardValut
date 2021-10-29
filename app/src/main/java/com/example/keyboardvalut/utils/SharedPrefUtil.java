@@ -81,7 +81,7 @@ public class SharedPrefUtil {
     }
 
     public boolean getBreakInAlert() {
-        return prefs.getBoolean("bStatus", false);
+        return prefs.getBoolean("bStatus", true);
     }
 
 

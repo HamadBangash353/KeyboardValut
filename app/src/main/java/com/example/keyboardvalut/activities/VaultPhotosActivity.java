@@ -5,9 +5,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,6 +17,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.esafirm.imagepicker.features.ImagePicker;
@@ -31,6 +37,7 @@ import com.example.keyboardvalut.interfaces.OnImageClickCallback;
 import com.example.keyboardvalut.interfaces.SelectedPathListCallback;
 import com.example.keyboardvalut.interfaces.OnFileRestoreCallback;
 import com.example.keyboardvalut.utils.DialogUtils;
+import com.example.keyboardvalut.utils.ItemDecorationUtils;
 import com.example.keyboardvalut.utils.MediaScannerUtils;
 import com.example.keyboardvalut.utils.ScreenUtils;
 import com.example.keyboardvalut.utils.SharedPrefUtil;
@@ -44,7 +51,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VaultPhotosActivity extends AppCompatActivity implements ClickListener, DrawerMenuClickListener, OnFileRestoreCallback, SelectedPathListCallback, DeleteFileCallback, OnImageClickCallback {
+import static android.os.Build.VERSION.SDK_INT;
+
+public class VaultPhotosActivity extends AppCompatActivity implements ClickListener, OnFileRestoreCallback, SelectedPathListCallback, DeleteFileCallback, OnImageClickCallback, LifecycleObserver {
 
     Context context;
     DrawerMenuAdapter adapter;
@@ -65,6 +74,30 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
     Dialog restoreAllImagesDialog;
     Dialog deleteAllImagesDialog;
 
+    boolean isDecorated = false;
+
+    boolean dataSelected=false;
+
+
+
+    int lifeCycleChecker = 0;
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (lifeCycleChecker==1)
+        {
+            startActivity(new Intent(this,VaultPasswordEnteringActivity.class));
+            finish();
+
+        }
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    void onMoveToBackground() {
+        lifeCycleChecker = 1;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +106,7 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
         ScreenUtils.hidingStatusBar(this);
 
         context = this;
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         photoPaths = new ArrayList<>();
         selectedPathsList = new ArrayList<>();
 
@@ -110,6 +143,12 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
                 DialogUtils.restoreDialog(restoreSingleImageDialog, VaultPhotosActivity.this);
                 dismissDialog(restoreSingleImageDialog);
                 break;
+
+            case R.id.btnCancelRestoreAll:
+            case R.id.ivExitRestoreAllImages:
+                dismissDialog(restoreAllImagesDialog);
+                break;
+
             case R.id.btnCancelDeleteDialog:
             case R.id.ivExitDeleteDialog:
                 DialogUtils.deleteFileDialog(deleteImageDialog, VaultPhotosActivity.this);
@@ -123,11 +162,14 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
             case R.id.btnDeleteAll:
                 new File(selectedPath).delete();
                 dismissDialog(deleteImageDialog);
+
                 refreshAdapter();
                 break;
             case R.id.btnRestoreAll:
                 restoreAllImages(selectedPathsList);
                 dismissDialog(restoreAllImagesDialog);
+                binding.bottonSheetLayout.setVisibility(View.GONE);
+                binding.btnAddPhotos.setVisibility(View.VISIBLE);
                 reloadingAdapter();
                 break;
 
@@ -139,6 +181,12 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
             case R.id.btnDeleteAllDialog:
                 deletingAllFile(selectedPathsList);
                 dismissDialog(deleteAllImagesDialog);
+                binding.bottonSheetLayout.setVisibility(View.GONE);
+                binding.btnAddPhotos.setVisibility(View.VISIBLE);
+                break;
+
+            case R.id.btnBack:
+                movingToBackActivity();
                 break;
 
         }
@@ -198,35 +246,6 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
                 .start();
     }
 
-    private void populatingDrawerMenu() {
-        adapter = new DrawerMenuAdapter(context, new DrawerMenuData().getMenuList());
-//        binding.rvDrawerMenu.setLayoutManager(new LinearLayoutManager(context));
-//        binding.rvDrawerMenu.setAdapter(adapter);
-    }
-
-    private void closeDrawer() {
-        binding.drawerLayout.closeDrawer(GravityCompat.START);
-    }
-
-    @Override
-    public void onDrawerMenuClickListener(int position) {
-        switch (position) {
-            case 0:
-                Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show();
-                closeDrawer();
-                break;
-            case 1:
-                closeDrawer();
-                break;
-            case 2:
-                closeDrawer();
-                break;
-            case 3:
-
-                closeDrawer();
-                break;
-        }
-    }
 
     private void deletingAllFile(List<String> selectedPathsList) {
         dialog.show();
@@ -263,7 +282,7 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
             try {
                 int i = 0;
                 while (i < images.size()) {
-
+                    Log.d("CountData", "CountData");
                     File from = new File(images.get(i).getPath());
                     long currentTime = System.currentTimeMillis();
                     File to = new File(dir + "/" + currentTime + "#jpg");
@@ -285,7 +304,6 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
 
     void restoreAllImages(List<String> imagesPaths) {
         dialog.show();
-        Toast.makeText(context, imagesPaths.size() + "", Toast.LENGTH_SHORT).show();
         new Thread(() -> {
 
             try {
@@ -314,6 +332,8 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
 
             List<Image> images = ImagePicker.getImages(data);
 
+            Log.d("MyImagesData", images.size() + "");
+
             loadingImagesInThread(images);
 
 
@@ -327,23 +347,31 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
             return;
         }
 
+
         FileChannel source;
         FileChannel destination;
         source = new FileInputStream(sourceFile).getChannel();
         destination = new FileOutputStream(destFile).getChannel();
         if (destination != null && source != null) {
             destination.transferFrom(source, 0, source.size());
+
             sourceFile.delete();
+
+
             new MediaScannerUtils(context, destFile);
             new MediaScannerUtils(context, sourceFile);
         }
-        if (source != null) {
-            source.close();
 
+        if (!(SDK_INT >= Build.VERSION_CODES.R)) {
+            if (source != null) {
+                source.close();
+
+            }
+            if (destination != null) {
+                destination.close();
+            }
         }
-        if (destination != null) {
-            destination.close();
-        }
+
     }
 
 
@@ -358,22 +386,30 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
     void settingAdapter() {
         hiddenImagesAdapter = new HiddenImagesAdapter(context, gettingHiddenImages());
         binding.rvPhotos.setLayoutManager(new GridLayoutManager(context, 2));
+        if (!isDecorated) {
+            ItemDecorationUtils itemDecoration = new ItemDecorationUtils(context, R.dimen._5sdp);
+            binding.rvPhotos.addItemDecoration(itemDecoration);
+            isDecorated=true;
+        }
         binding.rvPhotos.setAdapter(hiddenImagesAdapter);
 
     }
 
     @Override
     public void onFileRestoreCallback(String path) {
-        selectedPath = path;
-        DialogUtils.restoreDialog(restoreSingleImageDialog, this);
-        restoreSingleImageDialog.show();
+        if (!dataSelected)
+        {
+            selectedPath = path;
+            DialogUtils.restoreDialog(restoreSingleImageDialog, this);
+            restoreSingleImageDialog.show();
+        }
 
     }
 
     void restoringFiles(String path) {
 
         File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File(sdCard.getAbsolutePath() + "/.KeyboardVault/RestoredData");
+        File dir = new File(sdCard.getAbsolutePath() + "/RestoredData");
         File from = new File(path);
         long currentTime = System.currentTimeMillis();
         File to = new File(dir + "/" + currentTime + ".jpg");
@@ -391,6 +427,7 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
             binding.bottonSheetLayout.setVisibility(View.GONE);
             binding.btnAddPhotos.setVisibility(View.VISIBLE);
             isViewSelected = false;
+            dataSelected=false;
         } else {
             passingIntentToBackActivity();
         }
@@ -406,13 +443,14 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
     @Override
     public void onPathSelected(List<String> selectedPathsList, int visibilityCounter) {
 
-
         if (visibilityCounter > 0) {
+            dataSelected=true;
             isViewSelected = true;
             binding.bottonSheetLayout.setVisibility(View.VISIBLE);
             binding.btnAddPhotos.setVisibility(View.GONE);
             this.selectedPathsList = selectedPathsList;
         } else {
+            dataSelected=false;
             isViewSelected = false;
             binding.btnAddPhotos.setVisibility(View.VISIBLE);
             binding.bottonSheetLayout.setVisibility(View.GONE);
@@ -421,16 +459,26 @@ public class VaultPhotosActivity extends AppCompatActivity implements ClickListe
 
     @Override
     public void onFileDeleteCallback(String path) {
-        selectedPath = path;
-        DialogUtils.deleteFileDialog(deleteImageDialog, this);
-        deleteImageDialog.show();
+       if (!dataSelected)
+       {
+           selectedPath = path;
+           DialogUtils.deleteFileDialog(deleteImageDialog, this);
+           deleteImageDialog.show();
+       }
     }
 
     @Override
     public void onImageClickCallback(String path) {
-        intent =new Intent(context,ImageVeiwingActivity.class);
-        intent.putExtra("path",path);
-        intent.putExtra("activityTag","images");
+        intent = new Intent(context, ImageVeiwingActivity.class);
+        intent.putExtra("path", path);
+        intent.putExtra("activityTag", "images");
+        startActivity(intent);
+    }
+
+
+    private void movingToBackActivity() {
+        intent = new Intent(this, VaultSubActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 }

@@ -6,7 +6,6 @@ import java.io.File;
 
 public class DirectoriesUtils {
 
-
     public static void settingHidingImagesDirectory() {
         File dir = new File(Environment.getExternalStorageDirectory() + "/.KeyboardVault/MyVaultAppImages");
         try {
@@ -47,7 +46,7 @@ public class DirectoriesUtils {
     }
 
     public static void settingRestoreDirectory() {
-        File dir = new File(Environment.getExternalStorageDirectory() + "/.KeyboardVault/RestoredData");
+        File dir = new File(Environment.getExternalStorageDirectory() + "/RestoredData");
         try {
             if (dir.mkdir()) {
                 System.out.println("Directory created");

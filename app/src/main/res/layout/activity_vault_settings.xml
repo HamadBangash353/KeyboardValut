@@ -26,20 +26,19 @@
             tools:layout_editor_absoluteX="-2dp">
 
             <ImageView
-                android:id="@+id/btnDrawer"
+                android:id="@+id/btnBack"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginTop="15dp"
                 android:onClick="@{(v)->clickHandler.onClick(v)}"
-                android:padding="10dp"
-                android:src="@drawable/ic_drawer_menu" />
+                android:src="@drawable/ic_main_back" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="15dp"
-                android:layout_toEndOf="@+id/btnDrawer"
+                android:layout_toEndOf="@+id/btnBack"
                 android:fontFamily="@font/nunito_sans_regular"
                 android:text="My Vault Application"
                 android:textColor="@android:color/white"
@@ -98,8 +97,11 @@
                 android:src="@drawable/ic_replace" />
         </RelativeLayout>
 
+
+
         <RelativeLayout
-            android:id="@+id/secondRow"
+            android:onClick="@{(v)->clickHandler.onClick(v)}"
+            android:id="@+id/thirdRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
             android:layout_marginStart="@dimen/_5sdp"
@@ -116,51 +118,19 @@
                 android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/nunito_sans_regular"
-                android:text="@string/hide_vault_icon_label"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/_16sdp" />
-
-            <ImageView
-
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/_15sdp"
-                android:src="@drawable/ic_toggle_on" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/thirdRow"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:background="@drawable/setting_row_bg"
-            app:layout_constraintTop_toBottomOf="@+id/secondRow">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/nunito_sans_regular"
                 android:text="@string/break_in_alert_label"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/_16sdp" />
 
             <ImageView
+                android:padding="5dp"
                 android:onClick="@{(v)->clickHandler.onClick(v)}"
-                android:id="@+id/ivBreakInAlert"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/_15sdp"
-                android:src="@drawable/ic_toggle_on" />
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:src="@drawable/ic_arrow_farward" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -197,6 +167,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:onClick="@{(v)->clickHandler.onClick(v)}"
             android:id="@+id/fifthRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"

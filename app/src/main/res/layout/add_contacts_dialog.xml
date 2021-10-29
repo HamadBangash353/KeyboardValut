@@ -70,6 +70,7 @@
                 android:background="@drawable/contact_et_bg">
 
                 <EditText
+                    android:inputType="number"
                     android:id="@+id/etAddNumber"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

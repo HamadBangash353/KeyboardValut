@@ -15,6 +15,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.keyboardvalut.R;
@@ -35,7 +39,7 @@ import com.example.keyboardvalut.utils.ScreenUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VaultContactsActivity extends AppCompatActivity implements ClickListener, ContactEditCallback, DeleteContactCallback {
+public class VaultContactsActivity extends AppCompatActivity implements ClickListener, ContactEditCallback, DeleteContactCallback, LifecycleObserver {
 
     Context context;
     Intent intent;
@@ -52,8 +56,6 @@ public class VaultContactsActivity extends AppCompatActivity implements ClickLis
 
     int contactId;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +67,7 @@ public class VaultContactsActivity extends AppCompatActivity implements ClickLis
         addContactsAddDialog = new Dialog(context);
         editContactDialog = new Dialog(context);
         deleteContactDialog = new Dialog(context);
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         searchingNotes();
         creatingAddContactsDialog();
         creatingEditContactsDialog();
@@ -74,20 +76,46 @@ public class VaultContactsActivity extends AppCompatActivity implements ClickLis
         binding.setClickHandler(this);
     }
 
+    int lifeCycleChecker = 0;
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (lifeCycleChecker==1)
+        {
+            startActivity(new Intent(this,VaultPasswordEnteringActivity.class));
+            finish();
+
+        }
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    void onMoveToBackground() {
+        lifeCycleChecker = 1;
+    }
+
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnAddContacts:
+                creatingAddContactsDialog();
                 addContactsAddDialog.show();
                 break;
+
             case R.id.btnDelete:
                 deleteContact();
                 deleteContactDialog.dismiss();
                 break;
+
             case R.id.btnCancelDeleteDialog:
             case R.id.ivExitDeleteDialog:
                 deleteContactDialog.dismiss();
+                break;
+
+            case R.id.btnBack:
+                movingToBackActivity();
                 break;
         }
     }
@@ -108,9 +136,17 @@ public class VaultContactsActivity extends AppCompatActivity implements ClickLis
             @Override
             public void afterTextChanged(Editable s) {
 
-                // filter your list from your input
+                if (!s.toString().isEmpty()) {
+                    binding.btnAddContacts.setVisibility(View.INVISIBLE);
+                    binding.emptyLayoutIndicator.setVisibility(View.GONE);
+                } else {
+                    binding.btnAddContacts.setVisibility(View.VISIBLE);
+                    if (contactsList.size() == 0) {
+                        binding.emptyLayoutIndicator.setVisibility(View.VISIBLE);
+                    }
+                }
+
                 filter(s.toString());
-                //you can use runnable postDelayed like 500 ms to delay search text
             }
         });
     }
@@ -137,7 +173,7 @@ public class VaultContactsActivity extends AppCompatActivity implements ClickLis
         for (ContactsModel d : contactsList) {
             //or use .equal(text) with you want equal match
             //use .toLowerCase() for better matches
-            if (d.getName().toLowerCase().contains(text)) {
+            if (d.getName().toLowerCase().contains(text.toLowerCase())) {
                 searchList.add(d);
             }
         }
@@ -192,25 +228,20 @@ public class VaultContactsActivity extends AppCompatActivity implements ClickLis
         dialogBinding.etAddNumber.setText("");
         dialogBinding.etAddName.setText("");
 
-        dialogBinding.btnDoneAddContacts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (dialogBinding.etAddName.getText().toString().isEmpty() || dialogBinding.etAddNumber.getText().toString().isEmpty()) {
-                    Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    addingContacts(dialogBinding.etAddName.getText().toString(), dialogBinding.etAddNumber.getText().toString());
-                    refreshAdapter();
-                    addContactsAddDialog.dismiss();
-                }
-            }
-        });
+        dialogBinding.btnDoneAddContacts.setOnClickListener(v -> {
+            if (dialogBinding.etAddName.getText().toString().isEmpty() || dialogBinding.etAddNumber.getText().toString().isEmpty()) {
+                Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            } else {
+                addingContacts(dialogBinding.etAddName.getText().toString(), dialogBinding.etAddNumber.getText().toString());
 
-        dialogBinding.ivExitContactDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                dialogBinding.etAddNumber.setText("");
+                dialogBinding.etAddName.setText("");
+                refreshAdapter();
                 addContactsAddDialog.dismiss();
             }
         });
+
+        dialogBinding.ivExitContactDialog.setOnClickListener(v -> addContactsAddDialog.dismiss());
     }
 
     private void creatingEditContactsDialog() {
@@ -256,5 +287,11 @@ public class VaultContactsActivity extends AppCompatActivity implements ClickLis
         this.contactId = contactId;
         DialogUtils.deleteContactDialog(deleteContactDialog, this);
         deleteContactDialog.show();
+    }
+
+    private void movingToBackActivity() {
+        intent = new Intent(this, VaultSubActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 }

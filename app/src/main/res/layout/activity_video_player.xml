@@ -26,14 +26,13 @@
 
             <ImageView
 
-                android:id="@+id/btnDrawer"
+                android:id="@+id/btnBack"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/_5sdp"
                 android:onClick="@{(v)->clickHandler.onClick(v)}"
-                android:padding="10dp"
-                android:src="@drawable/ic_drawer_menu" />
+                android:src="@drawable/ic_main_back" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -41,7 +40,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/_20sdp"
-                android:layout_toEndOf="@+id/btnDrawer"
+                android:layout_toEndOf="@+id/btnBack"
                 android:fontFamily="@font/nunito_sans_regular"
                 android:text="Video"
                 android:textColor="@android:color/white"
@@ -49,13 +48,18 @@
 
         </RelativeLayout>
 
-        <hb.xvideoplayer.MxVideoPlayerWidget
 
-            android:id="@+id/mpw_video_player"
+<!--        <VideoView-->
+<!--            android:id="@+id/videoView1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_300sdp"-->
+<!--      android:layout_centerInParent="true" />-->
+
+        <com.potyvideo.library.AndExoPlayerView
+            android:id="@+id/andExoPlayerView"
+            android:layout_centerInParent="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
+            android:layout_height="@dimen/_300sdp" />
     </RelativeLayout>
 
 </layout>

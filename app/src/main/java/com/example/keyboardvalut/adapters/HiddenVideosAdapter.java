@@ -1,6 +1,7 @@
 package com.example.keyboardvalut.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.keyboardvalut.R;
 import com.example.keyboardvalut.databinding.PhotoVaultRowItemBinding;
+import com.example.keyboardvalut.databinding.VideoVaultRowItemBinding;
 import com.example.keyboardvalut.interfaces.DeleteFileCallback;
 import com.example.keyboardvalut.interfaces.OnVideoClickCallback;
 import com.example.keyboardvalut.interfaces.SelectedPathListCallback;
@@ -54,21 +56,25 @@ public class HiddenVideosAdapter extends RecyclerView.Adapter<HiddenVideosAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        PhotoVaultRowItemBinding binding =
+        VideoVaultRowItemBinding binding =
                 DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()),
-                        R.layout.photo_vault_row_item, viewGroup, false);
+                        R.layout.video_vault_row_item, viewGroup, false);
         return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         RequestOptions requestOptions = new RequestOptions();
-        Glide.with(context)
-                .load("video_url")
-                .apply(requestOptions)
-                .thumbnail(Glide.with(context).load(videoMediaList.get(position).getAbsolutePath()))
-                .into(viewHolder.binding.ivImage);
+//        Glide.with(context)
+//                .load("video_url")
+//                .apply(requestOptions)
+//                .thumbnail(Glide.with(context).load(videoMediaList.get(position).getAbsolutePath()))
+//                .into(viewHolder.binding.ivImage);
 
+        Glide
+                .with( context )
+                .load( Uri.fromFile( new File( videoMediaList.get(position).getAbsolutePath() ) ) )
+                .into( viewHolder.binding.ivImage );
 
         if (prefUtil.getClickedPos() == -1) {
             viewHolder.binding.ivShade.setVisibility(View.GONE);
@@ -171,9 +177,9 @@ public class HiddenVideosAdapter extends RecyclerView.Adapter<HiddenVideosAdapte
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private final PhotoVaultRowItemBinding binding;
+        private final VideoVaultRowItemBinding binding;
 
-        public ViewHolder(@NonNull PhotoVaultRowItemBinding binding) {
+        public ViewHolder(@NonNull VideoVaultRowItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

@@ -9,6 +9,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.example.keyboardvalut.R;
 import com.example.keyboardvalut.databinding.ActivityPasswordResetBinding;
@@ -17,7 +21,7 @@ import com.example.keyboardvalut.interfaces.ClickListener;
 import com.example.keyboardvalut.utils.ScreenUtils;
 import com.example.keyboardvalut.utils.SharedPrefUtil;
 
-public class ResetPasswordActivity extends AppCompatActivity implements ClickListener {
+public class ResetPasswordActivity extends AppCompatActivity implements ClickListener, LifecycleObserver {
 
     Context context;
     Intent intent;
@@ -25,6 +29,25 @@ public class ResetPasswordActivity extends AppCompatActivity implements ClickLis
     ActivityPasswordResetBinding binding;
 
     SharedPrefUtil prefUtil;
+
+    int lifeCycleChecker = 0;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (lifeCycleChecker == 1) {
+            startActivity(new Intent(this, VaultPasswordEnteringActivity.class));
+            finish();
+
+        }
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    void onMoveToBackground() {
+        lifeCycleChecker = 1;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +57,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements ClickLis
 
         context = this;
         prefUtil = new SharedPrefUtil(context);
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 
         binding.setClickHandler(this);
     }
@@ -54,13 +77,15 @@ public class ResetPasswordActivity extends AppCompatActivity implements ClickLis
         String confirmPassword = binding.etConfirmPassword.getText().toString();
         if (password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(context, "Fields must be filled", Toast.LENGTH_SHORT).show();
+        } else if (prefUtil.getPassword().equals(password)) {
+            Toast.makeText(context, "Password is same", Toast.LENGTH_SHORT).show();
         } else {
             if (password.equals(confirmPassword)) {
                 if (password.length() != 4) {
                     Toast.makeText(context, "Password must be 4 numbers", Toast.LENGTH_SHORT).show();
                 } else {
-                    prefUtil.setPassword(password);
-                    passingIntent();
+
+                    passingIntent(password);
                 }
             } else {
                 Toast.makeText(context, "Password is not matching", Toast.LENGTH_SHORT).show();
@@ -68,8 +93,9 @@ public class ResetPasswordActivity extends AppCompatActivity implements ClickLis
         }
     }
 
-    void passingIntent() {
+    void passingIntent(String password) {
         intent = new Intent(context, ConfirmResetPasswordActivity.class);
+        intent.putExtra("password",password);
         startActivity(intent);
         if (true) {
             finish();

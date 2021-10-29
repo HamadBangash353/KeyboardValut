@@ -9,7 +9,7 @@
     <string name="break_in_alert_label">Break In Alert</string>
     <string name="reset_password_label">Reset Password</string>
     <string name="add_email_label">Add Email</string>
-    <string name="enter_password_hint_label">Enter password</string>
+    <string name="enter_password_hint_label">Enter Here</string>
     <string name="add_photo_in_vault_label">Add photo in vault</string>
     <string name="vault_videos_label">Vault Videos</string>
     <string name="video_label">Video</string>
@@ -24,4 +24,9 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
+    <string name="label_go_key">Go</string>
+    <string name="label_next_key">Next</string>
+    <string name="label_send_key">Send</string>
 </resources>
