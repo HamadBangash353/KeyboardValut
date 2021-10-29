@@ -77,7 +77,7 @@ public class VaultMainActivity extends AppCompatActivity implements ClickListene
         ScreenUtils.hidingStatusBar(this);
 
         context = this;
-        populatingDrawerMenu();
+           populatingDrawerMenu();
         dialog = new ProgressDialog(context);
         dialog.setMessage("Loading...");
         requestingPermission();
